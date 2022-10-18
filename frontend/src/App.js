@@ -41,30 +41,7 @@ function App() {
     // const [isFileReady, setIsFileReady] = useState(false);
     const [fileUrl, setFileUrl] = useState("");
 
-    const formSubmitHandler = (e) => {
-        e.preventDefault();
-
-        const formData = new FormData();
-        formData.append("file", file.body);
-
-        const uploadOptions = {
-            method: "POST",
-            url: "http://localhost:4000/api/file/upload",
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-            data: formData,
-        };
-
-        // requesting to upload the file
-        axios
-            .request(uploadOptions)
-            .then((response) => {
-                console.log("file uploaded...");
-                setUploadResponse({ fileId: response.data.file_id, uploadSuccess: true });
-            })
-            .catch((err) => console.log(err));
-
+    useEffect(() => {
         // if upload was success then execute this
         // the below code is to convert the uploaded file
         if (uploadResponse.uploadSuccess) {
@@ -86,7 +63,9 @@ function App() {
                 })
                 .catch((err) => console.log(err));
         }
+    }, [uploadResponse]);
 
+    useEffect(() => {
         // below code is to check conversion status
         // if upload is success and convert is success then execute the below code
         if (convertResponse.convertSuccess) {
@@ -112,13 +91,18 @@ function App() {
                                     statusSuccess: true,
                                 });
                             }
-                            clearTimeout(setIntervalId);
+                            clearInterval(setIntervalId);
                         }
                     })
-                    .catch((err) => console.log(err));
+                    .catch((err) => {
+                        clearInterval(setIntervalId);
+                        console.log(err);
+                    });
             }, 5000);
         }
+    }, [convertResponse]);
 
+    useEffect(() => {
         // below code is to download the file on server
         // if check file status was success then
         if (checkStatusResponse.statusSuccess) {
@@ -140,7 +124,9 @@ function App() {
                 })
                 .catch((err) => console.log(err));
         }
+    }, [checkStatusResponse]);
 
+    useEffect(() => {
         // below code is to upload on cloudinary
         if (downloadResponse.downloadSuccess) {
             const cloudinaryUploadOptions = {
@@ -163,6 +149,36 @@ function App() {
                 .catch((err) => {
                     console.log(err);
                 });
+        }
+    }, [downloadResponse]);
+
+    const formSubmitHandler = (e) => {
+        e.preventDefault();
+
+        if (!uploadResponse.uploadSuccess) {
+            const formData = new FormData();
+            formData.append("file", file.body);
+
+            const uploadOptions = {
+                method: "POST",
+                url: "http://localhost:4000/api/file/upload",
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                data: formData,
+            };
+
+            // requesting to upload the file
+            axios
+                .request(uploadOptions)
+                .then((response) => {
+                    console.log("file uploaded...");
+                    setUploadResponse({
+                        fileId: response.data.file_id,
+                        uploadSuccess: true,
+                    });
+                })
+                .catch((err) => console.log(err));
         }
     };
 
