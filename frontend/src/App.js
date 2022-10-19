@@ -140,7 +140,7 @@ function App() {
                 .then((response) => {
                     console.log(" cloudinary upload ...");
 
-                    setFileUrl(response.file_url);
+                    setFileUrl(`${response.data.file_url}`);
                     setIsFileReady(true);
                     return;
                 })

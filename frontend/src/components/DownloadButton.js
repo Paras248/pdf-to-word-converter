@@ -4,11 +4,11 @@ import { saveAs } from "file-saver";
 import DownloadIcon from "@mui/icons-material/Download";
 
 const DownloadButton = (props) => {
+    console.log(props);
     const onButtonClick = () => {
-        // saveAs(
-        //     "https://res.cloudinary.com/dwx9da9n6/raw/upload/v1666109498/docs/ckam2okq3yrnbdvctgfq.docx"
-        // );
-        saveAs(`${props.fileUrl}`);
+        let fileName = props.fileUrl.split("/");
+        fileName = fileName[fileName.length - 1];
+        saveAs(props.fileUrl, fileName);
     };
     return (
         <button className={styles["button"]} onClick={onButtonClick}>
