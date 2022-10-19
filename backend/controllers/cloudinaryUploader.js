@@ -7,6 +7,7 @@ const cloudinaryUploader = BigPromise(async (req, res, next) => {
         return next(new CustomError("no fileName found in url", 400));
     }
     let fileName = req.query.fileName;
+    console.log(fileName);
     const result = await cloudinary.uploader.upload(`/tmp/${fileName}`, {
         folder: "docs",
         resource_type: "raw",
