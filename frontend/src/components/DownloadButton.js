@@ -5,10 +5,10 @@ import DownloadIcon from "@mui/icons-material/Download";
 
 const DownloadButton = (props) => {
     const onButtonClick = () => {
-        saveAs(
-            "https://res.cloudinary.com/dwx9da9n6/raw/upload/v1666109498/docs/ckam2okq3yrnbdvctgfq.docx"
-        );
-        // saveAs(`${props.fileUrl}`);
+        // saveAs(
+        //     "https://res.cloudinary.com/dwx9da9n6/raw/upload/v1666109498/docs/ckam2okq3yrnbdvctgfq.docx"
+        // );
+        saveAs(`${props.fileUrl}`);
     };
     return (
         <button className={styles["button"]} onClick={onButtonClick}>

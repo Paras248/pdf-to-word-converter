@@ -6,14 +6,12 @@ import ConvertButton from "./components/ConvertButton";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import axios from "axios";
 import DownloadButton from "./components/DownloadButton";
+import DownloadIcon from "@mui/icons-material/Download";
 
 function App() {
     const [file, setFile] = useState({
         file: null,
-        //uncomment the below line
-        //fileName: "",
-        // remove the below line
-        fileName: "fd",
+        fileName: "",
     });
 
     const [uploadResponse, setUploadResponse] = useState({
@@ -36,9 +34,7 @@ function App() {
         downloadSuccess: false,
     });
 
-    const [isFileReady, setIsFileReady] = useState(true);
-    //uncomment below and remove the testing line above
-    // const [isFileReady, setIsFileReady] = useState(false);
+    const [isFileReady, setIsFileReady] = useState(false);
     const [fileUrl, setFileUrl] = useState("");
 
     useEffect(() => {
@@ -72,7 +68,7 @@ function App() {
             console.log("checking status...");
             const statusOptions = {
                 method: "GET",
-                url: `http://localhost:4000/api/file/status?taskId=${convertResponse.task_id}`,
+                url: `http://localhost:4000/api/file/status?taskId=${convertResponse.taskId}`,
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -105,6 +101,7 @@ function App() {
     useEffect(() => {
         // below code is to download the file on server
         // if check file status was success then
+
         if (checkStatusResponse.statusSuccess) {
             const downloadOptions = {
                 method: "GET",
@@ -117,6 +114,7 @@ function App() {
             axios
                 .request(downloadOptions)
                 .then((response) => {
+                    console.log(response);
                     setDownloadResponse({
                         fileName: response.data.fileName,
                         downloadSuccess: true,
@@ -154,7 +152,7 @@ function App() {
 
     const formSubmitHandler = (e) => {
         e.preventDefault();
-
+        console.log("uploading file...");
         if (!uploadResponse.uploadSuccess) {
             const formData = new FormData();
             formData.append("file", file.body);
@@ -227,9 +225,20 @@ function App() {
                                     className={styles["file-name"]}
                                 >{`${file.fileName}.pdf`}</p>,
                             ]}
-                        {file.fileName !== "" && isFileReady && (
-                            <DownloadButton fileUrl={fileUrl} />
-                        )}
+                        {file.fileName !== "" &&
+                            isFileReady && [
+                                <p
+                                    key={0}
+                                    className={styles["select-heading"]}
+                                    style={{ marginLeft: -10 }}
+                                >
+                                    Your
+                                    <DescriptionIcon className={styles["file-icon"]} />
+                                    is ready to{" "}
+                                    <DownloadIcon style={{ marginLeft: 5.3 }} />
+                                </p>,
+                                <DownloadButton key={1} fileUrl={fileUrl} />,
+                            ]}
                     </div>
                 </form>
             </div>
