@@ -149,6 +149,8 @@ function App() {
                 },
             };
             console.log("uploading file on cloudinary...");
+            console.log(downloadResponse.fileName);
+
             axios
                 .request(cloudinaryUploadOptions)
                 .then((response) => {
