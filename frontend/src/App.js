@@ -37,7 +37,7 @@ function App() {
 
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showLoadingModal, setShowLoadingModal] = useState(false);
-    const [showErrorModal, setShowErrorModal] = useState(true);
+    const [showErrorModal, setShowErrorModal] = useState(false);
 
     const [isFileReady, setIsFileReady] = useState(false);
     const [fileUrl, setFileUrl] = useState("");
