@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./css/FileInput.module.css";
+import styles from "./FileInput.module.css";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 const FileInput = (props) => {
