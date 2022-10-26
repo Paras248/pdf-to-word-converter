@@ -15,6 +15,26 @@ function App() {
         fileName: "",
     });
 
+    const [uploadResponse, setUploadResponse] = useState({
+        fileId: "",
+        uploadSuccess: false,
+    });
+
+    const [convertResponse, setConvertResponse] = useState({
+        taskId: "",
+        convertSuccess: false,
+    });
+
+    const [checkStatusResponse, setCheckStatusResponse] = useState({
+        fileId: "",
+        statusSuccess: false,
+    });
+
+    const [downloadResponse, setDownloadResponse] = useState({
+        fileName: "",
+        downloadSuccess: false,
+    });
+
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showLoadingModal, setShowLoadingModal] = useState(false);
     const [showErrorModal, setShowErrorModal] = useState(false);
@@ -22,112 +42,160 @@ function App() {
     const [isFileReady, setIsFileReady] = useState(false);
     const [fileUrl, setFileUrl] = useState("");
 
-    const formSubmitHandler = (e) => {
-        e.preventDefault();
-        console.log("uploading file...");
+    useEffect(() => {
+        // if upload was success then execute this
+        // the below code is to convert the uploaded file
+        if (uploadResponse.uploadSuccess) {
+            const convertOptions = {
+                method: "POST",
+                url: `http://localhost:4000/api/file/convert?fileId=${uploadResponse.fileId}`,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            };
+            console.log("converting...");
+            axios
+                .request(convertOptions)
+                .then((response) => {
+                    setConvertResponse({
+                        taskId: response.data.task_id,
+                        convertSuccess: true,
+                    });
+                })
+                .catch((err) => {
+                    setShowLoadingModal(false);
+                    setShowErrorModal(true);
+                    console.log(err);
+                });
+        }
+    }, [uploadResponse]);
 
-        const formData = new FormData();
-        formData.append("file", file.body);
+    useEffect(() => {
+        // below code is to check conversion status
+        // if upload is success and convert is success then execute the below code
+        if (convertResponse.convertSuccess) {
+            console.log("checking status...");
+            const statusOptions = {
+                method: "GET",
+                url: `http://localhost:4000/api/file/status?taskId=${convertResponse.taskId}`,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            };
 
-        const uploadOptions = {
-            method: "POST",
-            url: "http://localhost:4000/api/file/upload",
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-            data: formData,
-        };
+            axios
+                .request(statusOptions)
+                .then((response) => {
+                    setCheckStatusResponse({
+                        fileId: response.data.file_id,
+                        statusSuccess: true,
+                    });
+                })
+                .catch((err) => {
+                    setShowLoadingModal(false);
+                    setShowErrorModal(true);
+                    console.log(err);
+                });
+        }
+    }, [convertResponse]);
 
-        // requesting to upload the file
-        axios
-            .request(uploadOptions)
-            .then((response) => {
-                console.log(response.data);
-                const convertOptions = {
-                    method: "POST",
-                    url: `http://localhost:4000/api/file/convert?fileId=${response.data.file_id}`,
+    useEffect(() => {
+        // below code is to download the file on server
+        // if check file status was success then
+
+        if (checkStatusResponse.statusSuccess) {
+            const downloadOptions = {
+                method: "GET",
+                url: `http://localhost:4000/api/file/download?fileId=${checkStatusResponse.fileId}`,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            };
+            console.log("donwloading file on server...");
+            axios
+                .request(downloadOptions)
+                .then((response) => {
+                    console.log(response);
+                    setDownloadResponse({
+                        fileName: response.data.fileName,
+                        downloadSuccess: true,
+                    });
+                })
+                .catch((err) => {
+                    setShowErrorModal(true);
+                    console.log(err);
+                });
+        }
+    }, [checkStatusResponse]);
+
+    useEffect(() => {
+        // below code is to upload on cloudinary
+        setTimeout(() => {
+            if (downloadResponse.downloadSuccess) {
+                const cloudinaryUploadOptions = {
+                    method: "get",
+                    url:
+                        "http://localhost:4000/api/file/cloud/upload?fileName=" +
+                        downloadResponse.fileName,
                     headers: {
                         "Content-Type": "application/json",
                     },
                 };
+                console.log("uploading file on cloudinary...");
+
                 axios
-                    .request(convertOptions)
+                    .request(cloudinaryUploadOptions)
                     .then((response) => {
-                        console.log(response.data);
-                        const statusOptions = {
-                            method: "GET",
-                            url: `http://localhost:4000/api/file/status?taskId=${response.data.task_id}`,
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                        };
+                        console.log(" cloudinary upload ...");
+                        console.log(cloudinaryUploadOptions.url);
+                        setFileUrl(response.data.file_url);
+                        setIsFileReady(true);
 
-                        axios
-                            .request(statusOptions)
-                            .then((response) => {
-                                console.log(response.data);
-                                const downloadOptions = {
-                                    method: "GET",
-                                    url: `http://localhost:4000/api/file/download?fileId=${response.data.file_id}`,
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                    },
-                                };
-                                axios
-                                    .request(downloadOptions)
-                                    .then((response) => {
-                                        setTimeout(() => {
-                                            console.log(response.data);
-                                            const cloudinaryUploadOptions = {
-                                                method: "get",
-                                                url: `http://localhost:4000/api/file/cloud/upload?fileName=${response.data.fileName}`,
-                                                headers: {
-                                                    "Content-Type": "application/json",
-                                                },
-                                            };
-                                            console.log(
-                                                "uploading file on cloudinary..."
-                                            );
-                                            axios
-                                                .request(cloudinaryUploadOptions)
-                                                .then((response) => {
-                                                    console.log(response.data);
-                                                    setFileUrl(response.data.file_url);
-                                                    setIsFileReady(true);
-
-                                                    //check the behaviour afterwards
-                                                    setShowLoadingModal(false);
-                                                    setShowSuccessModal(true);
-                                                })
-                                                .catch((err) => {
-                                                    setShowLoadingModal(false);
-                                                    setShowErrorModal(true);
-                                                    console.log(err);
-                                                });
-                                        }, 1000);
-                                    })
-                                    .catch((err) => {
-                                        setShowErrorModal(true);
-                                        console.log(err);
-                                    });
-                            })
-                            .catch((err) => {
-                                setShowLoadingModal(false);
-                                setShowErrorModal(true);
-                                console.log(err);
-                            });
+                        //check the behaviour afterwards
+                        setShowLoadingModal(false);
+                        setShowSuccessModal(true);
                     })
                     .catch((err) => {
                         setShowLoadingModal(false);
                         setShowErrorModal(true);
                         console.log(err);
                     });
-            })
-            .catch((err) => {
-                setShowLoadingModal(false);
-                setShowErrorModal(true);
-                console.log(err);
-            });
+            }
+        }, 1000);
+    }, [downloadResponse]);
+
+    const formSubmitHandler = (e) => {
+        e.preventDefault();
+        console.log("uploading file...");
+        if (!uploadResponse.uploadSuccess) {
+            const formData = new FormData();
+            formData.append("file", file.body);
+
+            const uploadOptions = {
+                method: "POST",
+                url: "http://localhost:4000/api/file/upload",
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                data: formData,
+            };
+
+            // requesting to upload the file
+            axios
+                .request(uploadOptions)
+                .then((response) => {
+                    console.log("file uploaded...");
+                    setUploadResponse({
+                        fileId: response.data.file_id,
+                        uploadSuccess: true,
+                    });
+                })
+                .catch((err) => {
+                    setShowLoadingModal(false);
+                    setShowErrorModal(true);
+                    console.log(err);
+                });
+        }
     };
 
     const inputChangeHandler = (e) => {
