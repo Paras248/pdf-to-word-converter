@@ -7,39 +7,23 @@ const checkStatus = BigPromise((req, res, next) => {
         return next(new CustomError("task_id not found", 400));
     }
 
-    const setIntervalId = setInterval(() => {
-        const options = {
-            method: "GET",
-            url: `https://api.conversiontools.io/v1/tasks/${req.query.taskId}`,
-            headers: {
-                Authorization: process.env.API_TOKEN,
-                "Content-Type": "application/json",
-            },
-        };
-        axios
-            .request(options)
-            .then((response) => {
-                if (
-                    response.data.status === "SUCCESS" ||
-                    response.data.status === "ERROR"
-                ) {
-                    if (response.data.status === "SUCCESS") {
-                        res.status(200).json({
-                            file_id: response.data.file_id,
-                            status: "SUCCESS",
-                        });
-                        clearInterval(setIntervalId);
-                    } else {
-                        return next(new CustomError("Conversion failed", 400));
-                    }
-                    clearInterval(setIntervalId);
-                }
-            })
-            .catch((err) => {
-                clearInterval(setIntervalId);
-                res.status(400).send(err);
-            });
-    }, 5000);
+    const options = {
+        method: "GET",
+        url: `https://api.conversiontools.io/v1/tasks/${req.query.taskId}`,
+        headers: {
+            Authorization: process.env.API_TOKEN,
+            "Content-Type": "application/json",
+        },
+    };
+
+    axios
+        .request(options)
+        .then((response) => {
+            res.status(200).json({ ...response.data });
+        })
+        .catch((err) => {
+            res.status(400).send(err);
+        });
 });
 
 module.exports = checkStatus;

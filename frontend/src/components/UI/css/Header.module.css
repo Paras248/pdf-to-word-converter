@@ -1,0 +1,14 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Silkscreen", cursive;
+    background-color: #504bf3;
+    color: white;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+.heading {
+    margin-left: 20px;
+}

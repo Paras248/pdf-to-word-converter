@@ -35,7 +35,7 @@ const uploadFile = BigPromise(async (req, res, next) => {
             });
         })
         .catch(function (error) {
-            return next(new CustomError(err, 400));
+            res.status(400).send(error);
         });
 });
 
