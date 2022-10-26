@@ -82,30 +82,20 @@ function App() {
                     "Content-Type": "application/json",
                 },
             };
-            let setIntervalId = setInterval(() => {
-                axios
-                    .request(statusOptions)
-                    .then((response) => {
-                        if (
-                            response.data.status === "SUCCESS" ||
-                            response.data.status === "ERROR"
-                        ) {
-                            if (response.data.status === "SUCCESS") {
-                                setCheckStatusResponse({
-                                    fileId: response.data.file_id,
-                                    statusSuccess: true,
-                                });
-                            }
-                            clearInterval(setIntervalId);
-                        }
-                    })
-                    .catch((err) => {
-                        clearInterval(setIntervalId);
-                        setShowLoadingModal(false);
-                        setShowErrorModal(true);
-                        console.log(err);
+
+            axios
+                .request(statusOptions)
+                .then((response) => {
+                    setCheckStatusResponse({
+                        fileId: response.data.file_id,
+                        statusSuccess: true,
                     });
-            }, 5000);
+                })
+                .catch((err) => {
+                    setShowLoadingModal(false);
+                    setShowErrorModal(true);
+                    console.log(err);
+                });
         }
     }, [convertResponse]);
 
@@ -142,27 +132,27 @@ function App() {
         // below code is to upload on cloudinary
         if (downloadResponse.downloadSuccess) {
             const cloudinaryUploadOptions = {
-                method: "GET",
-                url: `http://localhost:4000/api/file/cloud/upload?fileName=${downloadResponse.fileName}`,
+                method: "get",
+                url:
+                    "http://localhost:4000/api/file/cloud/upload?fileName=" +
+                    downloadResponse.fileName,
                 headers: {
                     "Content-Type": "application/json",
                 },
             };
             console.log("uploading file on cloudinary...");
-            console.log(downloadResponse.fileName);
 
             axios
                 .request(cloudinaryUploadOptions)
                 .then((response) => {
                     console.log(" cloudinary upload ...");
-
-                    setFileUrl(`${response.data.file_url}`);
+                    console.log(cloudinaryUploadOptions.url);
+                    setFileUrl(response.data.file_url);
                     setIsFileReady(true);
 
                     //check the behaviour afterwards
                     setShowLoadingModal(false);
                     setShowSuccessModal(true);
-                    return;
                 })
                 .catch((err) => {
                     setShowLoadingModal(false);
