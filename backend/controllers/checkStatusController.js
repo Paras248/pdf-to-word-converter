@@ -37,7 +37,7 @@ const checkStatus = BigPromise((req, res, next) => {
             })
             .catch((err) => {
                 clearInterval(setIntervalId);
-                res.status(400).send(err);
+                return next(new CustomError("Conversion status failed", 400));
             });
     }, 5000);
 });

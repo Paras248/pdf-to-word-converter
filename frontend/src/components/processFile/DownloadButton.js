@@ -4,7 +4,6 @@ import { saveAs } from "file-saver";
 import DownloadIcon from "@mui/icons-material/Download";
 
 const DownloadButton = (props) => {
-    console.log(props);
     const onButtonClick = () => {
         let fileName = props.fileUrl.split("/");
         fileName = fileName[fileName.length - 1];

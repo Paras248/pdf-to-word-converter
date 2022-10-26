@@ -26,7 +26,7 @@ const convertFile = BigPromise((req, res, next) => {
             });
         })
         .catch((err) => {
-            res.status(400).send(err);
+            return next(new CustomError("Conversion failed", 400));
         });
 });
 

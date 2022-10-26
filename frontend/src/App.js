@@ -53,7 +53,6 @@ function App() {
                     "Content-Type": "application/json",
                 },
             };
-            console.log("converting...");
             axios
                 .request(convertOptions)
                 .then((response) => {
@@ -65,7 +64,6 @@ function App() {
                 .catch((err) => {
                     setShowLoadingModal(false);
                     setShowErrorModal(true);
-                    console.log(err);
                 });
         }
     }, [uploadResponse]);
@@ -74,7 +72,6 @@ function App() {
         // below code is to check conversion status
         // if upload is success and convert is success then execute the below code
         if (convertResponse.convertSuccess) {
-            console.log("checking status...");
             const statusOptions = {
                 method: "GET",
                 url: `http://localhost:4000/api/file/status?taskId=${convertResponse.taskId}`,
@@ -94,7 +91,6 @@ function App() {
                 .catch((err) => {
                     setShowLoadingModal(false);
                     setShowErrorModal(true);
-                    console.log(err);
                 });
         }
     }, [convertResponse]);
@@ -111,11 +107,9 @@ function App() {
                     "Content-Type": "application/json",
                 },
             };
-            console.log("donwloading file on server...");
             axios
                 .request(downloadOptions)
                 .then((response) => {
-                    console.log(response);
                     setDownloadResponse({
                         fileName: response.data.fileName,
                         downloadSuccess: true,
@@ -123,7 +117,6 @@ function App() {
                 })
                 .catch((err) => {
                     setShowErrorModal(true);
-                    console.log(err);
                 });
         }
     }, [checkStatusResponse]);
@@ -141,13 +134,10 @@ function App() {
                         "Content-Type": "application/json",
                     },
                 };
-                console.log("uploading file on cloudinary...");
 
                 axios
                     .request(cloudinaryUploadOptions)
                     .then((response) => {
-                        console.log(" cloudinary upload ...");
-                        console.log(cloudinaryUploadOptions.url);
                         setFileUrl(response.data.file_url);
                         setIsFileReady(true);
 
@@ -158,7 +148,6 @@ function App() {
                     .catch((err) => {
                         setShowLoadingModal(false);
                         setShowErrorModal(true);
-                        console.log(err);
                     });
             }
         }, 1000);
@@ -166,7 +155,6 @@ function App() {
 
     const formSubmitHandler = (e) => {
         e.preventDefault();
-        console.log("uploading file...");
         if (!uploadResponse.uploadSuccess) {
             const formData = new FormData();
             formData.append("file", file.body);
@@ -184,7 +172,6 @@ function App() {
             axios
                 .request(uploadOptions)
                 .then((response) => {
-                    console.log("file uploaded...");
                     setUploadResponse({
                         fileId: response.data.file_id,
                         uploadSuccess: true,
@@ -193,7 +180,6 @@ function App() {
                 .catch((err) => {
                     setShowLoadingModal(false);
                     setShowErrorModal(true);
-                    console.log(err);
                 });
         }
     };

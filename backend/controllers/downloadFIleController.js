@@ -35,7 +35,7 @@ const downloadFile = BigPromise((req, res, next) => {
             });
         })
         .catch((err) => {
-            res.send(err);
+            return next(new CustomError("Download file failed", 400));
         });
 });
 

@@ -28,7 +28,6 @@ const uploadFile = BigPromise(async (req, res, next) => {
     axios
         .request(options)
         .then(function (response) {
-            // console.log(response.data.file_id);z
             res.status(200).json({
                 success: true,
                 file_id: response.data.file_id,
