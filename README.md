@@ -2,7 +2,7 @@
 
 - first check whether node and npm exists using this command node -v and npm -v if not then install node and install npm using command npm i npm -g.
 
-- ###For backend: 
+- ### For backend: 
 
   1. Then go inside backend folder using cmd/terminal then use command npm i to install required packages.
 
@@ -19,7 +19,7 @@
 
   6. Then run node index.js or npm start
  
-- ###For frontend: 
+- ### For frontend: 
 
   1. Run npm i
   
