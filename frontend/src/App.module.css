@@ -7,8 +7,6 @@
 
 .file-main-container {
     padding: 50px 100px;
-    margin-left: 40%;
-    margin-right: 40%;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -62,3 +60,37 @@
 /* .header-word {
     color: #1e17ec;
 } */
+
+@media screen and (max-width: 702px) {
+    .file-sub-container {
+        padding: 50px 70px;
+    }
+    .file-main-container {
+        padding: 50px 50px;
+    }
+}
+
+@media screen and (max-width: 451px) {
+    .file-name {
+        font-size: 10px;
+    }
+    .file-icon {
+        width: 15px;
+    }
+    .select-heading {
+        font-size: 13px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .file-sub-container {
+        padding: 30px 50px;
+    }
+    .file-main-container {
+        padding: 30px 30px;
+    }
+
+    .header-text-container {
+        font-size: 18px;
+    }
+}
