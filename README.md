@@ -17,7 +17,7 @@
      CLOUDINARY_API_SECRET=paste cloudinary api secret here,
      CLOUDINARY_API_KEY=paste cloudinary api key here
 
-  6. Then npm start
+  6. Then run npm start
 
   7. After doing these steps successfully you can see the following output on terminal/cmd
   
